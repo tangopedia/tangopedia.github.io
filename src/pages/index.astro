@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import GraphCanvas from '../components/GraphCanvas.astro';
+import { loadVocab } from '../lib/vocab';
+import { loadFigures } from '../lib/figures';
+import { buildGraph } from '../lib/graph';
+
+const vocab = loadVocab();
+const figures = await loadFigures();
+const graph = buildGraph(figures, vocab);
+const base = import.meta.env.BASE_URL;
+
+// Home focus: the ochos hub if present, else the first figure.
+const focusId = graph.nodes.find((n) => n.id === 'ochos')?.id ?? graph.nodes[0].id;
+const families = Object.keys(graph.facets.family).sort();
+const levels = Object.keys(graph.facets.difficulty).sort();
+---
+
+<Base title="Tangopedia — the graph of tango figures">
+  <div class="page-head">
+    <h1>The <em>vocabulary</em> before the sentence.</h1>
+    <p class="lede">
+      A navigable graph of Argentine tango figures. Edges are <b>computed</b> from how a figure's
+      exit state meets the next figure's entry state; <b>authored</b> links add curated relations.
+      Click any blob to walk the graph from there.
+    </p>
+  </div>
+
+  <div class="facet-bar">
+    <span class="facet-lbl">families</span>
+    {families.map((f) => <a class="chip" href={`${base}plain/#${f}`}>{f} · {graph.facets.family[f].length}</a>)}
+    <span class="facet-lbl" style="margin-left:1rem">level</span>
+    {levels.map((l) => <a class="chip" href={`${base}plain/#level-${l}`}>L{l}</a>)}
+  </div>
+
+  <GraphCanvas graph={graph} focusId={focusId} />
+</Base>

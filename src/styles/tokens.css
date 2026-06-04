@@ -1,0 +1,169 @@
+/* ============================================================
+   TANGO REFERENCE — DESIGN TOKENS
+   Framework-agnostic CSS custom properties.
+   Two themes via [data-theme]; motion via [data-motion] + prefers-reduced-motion.
+   ============================================================ */
+
+:root {
+  /* ---- Type families ---- */
+  --font-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --font-ui: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --font-mono: "Spline Sans Mono", "SF Mono", ui-monospace, monospace;
+
+  /* ---- Fluid type scale (1.25 ratio, clamps to viewport) ---- */
+  --step--1: clamp(0.78rem, 0.75rem + 0.15vw, 0.86rem);
+  --step-0:  clamp(0.95rem, 0.92rem + 0.2vw, 1.05rem);
+  --step-1:  clamp(1.1rem, 1.02rem + 0.4vw, 1.35rem);
+  --step-2:  clamp(1.35rem, 1.2rem + 0.7vw, 1.8rem);
+  --step-3:  clamp(1.7rem, 1.4rem + 1.3vw, 2.6rem);
+  --step-4:  clamp(2.1rem, 1.6rem + 2.4vw, 3.6rem);
+
+  /* ---- Weights ---- */
+  --w-reg: 400;
+  --w-med: 500;
+  --w-semi: 600;
+  --w-bold: 700;
+
+  /* ---- Spacing scale (8pt-ish, fluid at the top) ---- */
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-s:   0.75rem;
+  --space-m:   1rem;
+  --space-l:   1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+
+  /* ---- Radii ---- */
+  --radius-s: 6px;
+  --radius-m: 12px;
+  --radius-l: 22px;
+  --radius-pill: 999px;
+  /* the organic pebble corner used by blobs */
+  --blob-radius: 48% 52% 55% 45% / 55% 48% 52% 45%;
+
+  /* ---- Strokes ---- */
+  --stroke: 1.5px;
+  --stroke-bold: 3px;
+
+  /* ---- Motion (overridden by reduced-motion) ---- */
+  --dur-fast: 120ms;
+  --dur: 240ms;
+  --dur-slow: 480ms;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --flow-dur: 1.6s;       /* edge directional flow */
+  --flow-play: running;   /* paused under reduced-motion */
+  --blob-float: 7s;       /* idle blob drift */
+  --float-play: running;
+  --zoom-hover: 1.18;     /* blob hover scale */
+}
+
+/* ============================================================
+   EXPRESSIVE — warm & sensual tango stage
+   Dark warm canvas, cream ink, amber→crimson difficulty heat ramp,
+   subtle glow on focal nodes.
+   ============================================================ */
+[data-theme="expressive"] {
+  color-scheme: dark;
+
+  --canvas:    oklch(0.17 0.018 40);
+  --canvas-2:  oklch(0.20 0.020 42);
+  --surface:   oklch(0.23 0.022 44);
+  --surface-2: oklch(0.28 0.024 46);
+  --ink:       oklch(0.94 0.018 75);
+  --ink-soft:  oklch(0.78 0.020 72);
+  --ink-faint: oklch(0.58 0.020 66);
+  --line:      oklch(0.36 0.022 50);
+  --line-soft: oklch(0.30 0.020 48);
+
+  --accent:      oklch(0.60 0.19 26);   /* hot tango red */
+  --accent-soft: oklch(0.80 0.12 75);   /* amber */
+  --focus:       oklch(0.86 0.14 82);   /* warm gold ring */
+
+  /* difficulty heat ramp: amber (beginner) -> oxblood (advanced) */
+  --diff-1: oklch(0.83 0.13 80);
+  --diff-2: oklch(0.74 0.16 56);
+  --diff-3: oklch(0.64 0.18 36);
+  --diff-4: oklch(0.53 0.18 23);
+  /* ink color to place ON a difficulty fill */
+  --on-diff-1: oklch(0.22 0.03 50);
+  --on-diff-2: oklch(0.20 0.03 50);
+  --on-diff-3: oklch(0.96 0.02 80);
+  --on-diff-4: oklch(0.96 0.02 80);
+
+  /* edges */
+  --edge-computed: oklch(0.52 0.02 60);     /* faint warm gray */
+  --edge-authored: oklch(0.78 0.14 65);     /* glowing amber */
+
+  --glow: 0 0 0 1px color-mix(in oklch, var(--accent-soft) 35%, transparent),
+          0 6px 28px -6px color-mix(in oklch, var(--accent) 55%, transparent);
+  --card-shadow: 0 10px 40px -16px oklch(0 0 0 / 0.7);
+  --placeholder-a: oklch(0.26 0.02 46);
+  --placeholder-b: oklch(0.22 0.02 46);
+}
+
+/* ============================================================
+   CALM — high-contrast, low-motion, near-monochrome
+   Paper-white canvas, ink black, grayscale difficulty ramp,
+   difficulty ALSO shown by number + segmented bar (never color alone).
+   Single dark-blue focus for AAA visibility.
+   ============================================================ */
+[data-theme="calm"] {
+  color-scheme: light;
+
+  --canvas:    oklch(0.99 0.004 85);
+  --canvas-2:  oklch(0.97 0.004 85);
+  --surface:   oklch(1 0 0);
+  --surface-2: oklch(0.96 0.004 85);
+  --ink:       oklch(0.17 0.01 60);
+  --ink-soft:  oklch(0.34 0.01 60);
+  --ink-faint: oklch(0.50 0.01 60);
+  --line:      oklch(0.22 0.01 60);
+  --line-soft: oklch(0.55 0.01 60);
+
+  --accent:      oklch(0.42 0.16 26);   /* darkened tango red, AA on white */
+  --accent-soft: oklch(0.42 0.16 26);
+  --focus:       oklch(0.45 0.20 252);  /* strong blue focus ring */
+
+  /* difficulty: monochrome ramp (redundant w/ number + bar) */
+  --diff-1: oklch(0.91 0 0);
+  --diff-2: oklch(0.74 0 0);
+  --diff-3: oklch(0.52 0 0);
+  --diff-4: oklch(0.28 0 0);
+  --on-diff-1: oklch(0.17 0 0);
+  --on-diff-2: oklch(0.17 0 0);
+  --on-diff-3: oklch(0.99 0 0);
+  --on-diff-4: oklch(0.99 0 0);
+
+  --edge-computed: oklch(0.62 0.01 60);
+  --edge-authored: oklch(0.22 0.01 60);
+
+  --glow: none;
+  --card-shadow: 0 1px 0 0 var(--line);
+  --placeholder-a: oklch(0.93 0.004 85);
+  --placeholder-b: oklch(0.88 0.004 85);
+}
+
+/* ============================================================
+   REDUCED MOTION — kill all animation, keep states instant.
+   Triggered by the explicit toggle OR the OS preference.
+   ============================================================ */
+[data-motion="reduced"] {
+  --dur-fast: 0ms;
+  --dur: 0ms;
+  --dur-slow: 0ms;
+  --flow-play: paused;
+  --float-play: paused;
+  --zoom-hover: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root:not([data-motion="full"]) {
+    --dur-fast: 0ms;
+    --dur: 0ms;
+    --dur-slow: 0ms;
+    --flow-play: paused;
+    --float-play: paused;
+    --zoom-hover: 1;
+  }
+}

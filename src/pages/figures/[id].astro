@@ -1,0 +1,30 @@
+---
+import Base from '../../layouts/Base.astro';
+import GraphCanvas from '../../components/GraphCanvas.astro';
+import DetailPanel from '../../components/DetailPanel.astro';
+import { loadVocab } from '../../lib/vocab';
+import { loadFigures, loadContent } from '../../lib/figures';
+import { buildGraph } from '../../lib/graph';
+
+export async function getStaticPaths() {
+  const figures = await loadFigures();
+  return figures.map((f) => ({ params: { id: f.id } }));
+}
+
+const { id } = Astro.params;
+const vocab = loadVocab();
+const figures = await loadFigures();
+const graph = buildGraph(figures, vocab);
+const figure = figures.find((f) => f.id === id)!;
+const content = await loadContent(id!);
+---
+
+<Base title={`${figure.name.canonical} — Tangopedia`}>
+  <div class="page-head">
+    <p class="crumbs"><a href={import.meta.env.BASE_URL} style="color:var(--ink-soft)">graph</a> ▸ {figure.family} ▸ <span style="color:var(--accent)">{figure.name.canonical}</span></p>
+  </div>
+
+  <GraphCanvas graph={graph} focusId={figure.id} />
+
+  <DetailPanel figure={figure} graph={graph} title={content?.data.title} ContentComponent={content?.Content} />
+</Base>

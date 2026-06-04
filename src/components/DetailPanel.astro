@@ -1,0 +1,114 @@
+---
+import type { Figure } from '../lib/figures';
+import type { Graph } from '../lib/graph';
+
+interface Props { figure: Figure; graph: Graph; title?: string; ContentComponent?: any }
+const { figure, graph, title, ContentComponent } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+const node = (id: string) => graph.nodes.find((n) => n.id === id);
+const diffOf = (id: string) => Math.min(node(id)?.difficulty ?? 2, 4);
+const nameOf = (id: string) => node(id)?.canonical ?? id;
+
+const val = (v: any) => (v === undefined ? 'any' : Array.isArray(v) ? v.join('/') : v);
+const fmt = (p: any) => (!p ? 'any' : [val(p.embrace), val(p.system), val(p.relative), `foot ${val(p.follower?.free_foot)}`].join(' · '));
+
+const relLabel: Record<string, string> = { variant_of: 'variant of', mirror_of: 'mirror of', recommended: 'recommended' };
+const d = Math.min(figure.difficulty, 4);
+---
+
+<div class="panel lay-stack">
+  <div class="body-col">
+    <p class="panel-context">▸ figures / {figure.id} &nbsp;·&nbsp; deep-linkable URL</p>
+    <p class="crumbs">{figure.family} · level {figure.difficulty} · {figure.kind}</p>
+    <h3 class="fig-name"><em>{title ?? figure.name.canonical}</em></h3>
+    {figure.name.also?.length > 0 && <p class="crumbs">also: {figure.name.also.join(', ')}</p>}
+  </div>
+
+  <div class="media">
+    {figure.clips?.map((c: any) =>
+      c.type === 'youtube' ? (
+        <iframe
+          class="clip"
+          src={`https://www.youtube.com/embed/${c.id}${c.start ? `?start=${c.start}` : ''}`}
+          title={`${figure.name.canonical} clip`}
+          loading="lazy"
+          allow="encrypted-media"
+        ></iframe>
+      ) : (
+        <div class="clip" style="position:relative">
+          <span class="badge">muted · loops</span>
+          <video class="clip" src={`${base}clips/${c.src}`} muted loop playsinline autoplay></video>
+        </div>
+      ),
+    )}
+    {(!figure.clips || figure.clips.length === 0) && <div class="clip ph" data-label="no clip yet" style="min-height:160px"></div>}
+  </div>
+
+  <div class="body-col">
+    {ContentComponent ? <div class="prose"><ContentComponent /></div> : null}
+
+    <div class="statepair">
+      <div class="statebox"><div class="k">entry state</div><div class="v" style="font-size:var(--step-0)">{fmt(figure.entry)}</div></div>
+      <div class="statebox"><div class="k">exit state</div><div class="v" style="font-size:var(--step-0)">{figure.exit.map((e: any) => fmt(e)).join('  |  ')}</div></div>
+    </div>
+
+    {figure.relations?.length > 0 && (
+      <div class="related">
+        {figure.relations.map((r: any) => (
+          <a class="pill" href={`${base}figures/${r.target}/`}>
+            <span class="dot" style={`background:var(--diff-${diffOf(r.target)})`}></span>
+            {nameOf(r.target)} <small style="color:var(--ink-faint)">· {relLabel[r.type]}</small>
+          </a>
+        ))}
+      </div>
+    )}
+
+    {figure.executions && figure.executions.length > 0 && (
+      <div class="executions">
+        <div class="exec-head">
+          <strong>Leader view</strong>
+          <div class="seg" role="group" aria-label="Leader execution">
+            {figure.executions.map((ex: any, i: number) => (
+              <button data-exec-tab={ex.id} aria-pressed={String(i === 0)}>{ex.name?.canonical ?? ex.id}</button>
+            ))}
+          </div>
+        </div>
+        {figure.executions.map((ex: any, i: number) => (
+          <div class="exec-panel" data-exec-panel={ex.id} hidden={i !== 0}>
+            {ex.leader && (
+              <p class="leader-state">
+                leader: foot {val(ex.leader.entry?.free_foot)} → {ex.leader.exit.map((e: any) => val(e.free_foot)).join('/')}
+              </p>
+            )}
+            {ex.decomposition?.length > 0 && (
+              <ol class="step-list">
+                {ex.decomposition.map((s: any) => (
+                  <li>
+                    <a href={`${base}figures/${s.ref}/`} style="color:var(--ink)">{nameOf(s.ref)}</a>
+                    {Object.keys(s).filter((k) => k !== 'ref').length > 0 && (
+                      <span style="color:var(--ink-faint);font-family:var(--font-mono);font-size:.85em">
+                        {' '}{Object.entries(s).filter(([k]) => k !== 'ref').map(([k, v]) => `${k}:${v}`).join(' ')}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ol>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {!figure.executions && figure.decomposition && figure.decomposition.length > 0 && (
+      <div class="executions">
+        <strong>Steps</strong>
+        <ol class="step-list">
+          {figure.decomposition.map((s: any) => (
+            <li><a href={`${base}figures/${s.ref}/`} style="color:var(--ink)">{nameOf(s.ref)}</a></li>
+          ))}
+        </ol>
+      </div>
+    )}
+  </div>
+</div>

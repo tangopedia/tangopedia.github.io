@@ -1,0 +1,16 @@
+id: cross
+kind: figure
+name:
+  canonical: cruzada
+  also: [the cross]
+family: walking
+tags: [cross-system]
+difficulty: 1
+entry:
+  system: cross
+  relative: face-to-face
+  follower: { free_foot: left }
+exit:
+  - { system: cross, relative: face-to-face, follower: { free_foot: left } }
+relations:
+  - { type: recommended, target: forward-ocho }

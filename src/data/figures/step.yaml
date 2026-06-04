@@ -1,0 +1,12 @@
+id: step
+kind: primitive
+name:
+  canonical: paso
+  also: [step]
+family: primitives
+tags: [walk]
+difficulty: 1
+entry:
+  relative: face-to-face
+exit:
+  - { embrace: same-as-entry, system: same-as-entry, relative: same-as-entry, follower: { free_foot: same-as-entry } }

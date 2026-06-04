@@ -1,0 +1,12 @@
+id: dissociate
+kind: primitive
+name:
+  canonical: disociación
+  also: [dissociation]
+family: primitives
+tags: [dissociation]
+difficulty: 1
+entry:
+  relative: face-to-face
+exit:
+  - { embrace: same-as-entry, system: same-as-entry, relative: same-as-entry, follower: { free_foot: same-as-entry } }

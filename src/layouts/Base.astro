@@ -1,0 +1,130 @@
+---
+import '../styles/tokens.css';
+import '../styles/styles.css';
+import '../styles/app.css';
+interface Props { title?: string }
+const { title = 'Tangopedia' } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<!doctype html>
+<html lang="en" data-theme="expressive">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,400;1,6..72,600&family=Hanken+Grotesk:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Set theme/motion before paint to avoid a flash; calm is the default when motion is unwelcome. -->
+    <script is:inline>
+      (() => {
+        const r = document.documentElement;
+        let t, m;
+        try { t = localStorage.getItem('tango-theme'); m = localStorage.getItem('tango-motion'); } catch {}
+        r.setAttribute('data-theme', t || (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'calm' : 'expressive'));
+        if (m && m !== 'auto') r.setAttribute('data-motion', m);
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <a class="mark" href={base} style="text-decoration:none">Tango</a>
+        <span class="tag">pedia</span>
+      </div>
+
+      <nav class="toggle-group" aria-label="Views">
+        <a class="seg-link" href={base}>Graph</a>
+        <a class="seg-link" href={`${base}plain/`}>List</a>
+      </nav>
+
+      <div class="toggle-group" data-act="theme">
+        <span class="lbl">mode</span>
+        <div class="seg" role="group" aria-label="Display mode">
+          <button data-val="expressive" aria-pressed="true">Expressive</button>
+          <button data-val="calm" aria-pressed="false">Calm</button>
+        </div>
+      </div>
+
+      <div class="toggle-group" data-act="motion">
+        <span class="lbl">motion</span>
+        <div class="seg" role="group" aria-label="Motion">
+          <button data-val="auto" aria-pressed="true">Auto</button>
+          <button data-val="full" aria-pressed="false">Full</button>
+          <button data-val="reduced" aria-pressed="false">Reduced</button>
+        </div>
+      </div>
+
+      <div class="search">
+        <input id="q" type="search" placeholder="Search figures…" autocomplete="off" aria-label="Search figures" />
+        <div class="search-results" id="search-results"></div>
+      </div>
+    </header>
+
+    <main class="content">
+      <slot />
+    </main>
+
+    <script is:inline define:vars={{ base }}>
+      const root = document.documentElement;
+      const mq = matchMedia('(prefers-reduced-motion: reduce)');
+
+      function setTheme(t) {
+        root.setAttribute('data-theme', t);
+        try { localStorage.setItem('tango-theme', t); } catch {}
+        document.querySelectorAll('[data-act="theme"] button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val === t)));
+      }
+      function setMotion(m) {
+        if (m === 'auto') root.removeAttribute('data-motion');
+        else root.setAttribute('data-motion', m);
+        try { localStorage.setItem('tango-motion', m); } catch {}
+        document.querySelectorAll('[data-act="motion"] button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.val === m)));
+      }
+      let st, sm;
+      try { st = localStorage.getItem('tango-theme'); sm = localStorage.getItem('tango-motion'); } catch {}
+      setTheme(st || (mq.matches ? 'calm' : 'expressive'));
+      setMotion(sm || 'auto');
+
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-act] button');
+        if (!btn) return;
+        const act = btn.closest('[data-act]').dataset.act;
+        if (act === 'theme') setTheme(btn.dataset.val);
+        if (act === 'motion') setMotion(btn.dataset.val);
+      });
+
+      // Execution (leader voicing) toggle inside a detail panel
+      document.addEventListener('click', (e) => {
+        const tab = e.target.closest('[data-exec-tab]');
+        if (!tab) return;
+        const scope = tab.closest('.executions');
+        const id = tab.dataset.execTab;
+        scope.querySelectorAll('[data-exec-tab]').forEach((b) => b.setAttribute('aria-pressed', String(b === tab)));
+        scope.querySelectorAll('[data-exec-panel]').forEach((p) => (p.hidden = p.dataset.execPanel !== id));
+      });
+
+      // Client-side search over the build-emitted index
+      const input = document.getElementById('q');
+      const box = document.getElementById('search-results');
+      let index = null;
+      const load = async () => index ?? (index = await (await fetch(`${base}search-index.json`)).json());
+      input?.addEventListener('input', async (e) => {
+        const q = e.target.value.trim().toLowerCase();
+        if (!q) return box.classList.remove('open');
+        const rows = (await load()).filter((r) =>
+          [r.canonical, ...(r.also || []), r.family, ...(r.tags || [])].join(' ').toLowerCase().includes(q),
+        );
+        box.innerHTML = rows
+          .slice(0, 12)
+          .map((r) => `<a href="${base}figures/${r.id}/">${r.canonical}<small>${r.family} · L${r.difficulty}</small></a>`)
+          .join('');
+        box.classList.toggle('open', rows.length > 0);
+      });
+      document.addEventListener('click', (e) => { if (!e.target.closest('.search')) box.classList.remove('open'); });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+id: salida
+kind: figure
+name:
+  canonical: salida básica
+  also: [basic salida]
+family: walking
+tags: [walk]
+difficulty: 1
+entry:
+  system: parallel
+  relative: face-to-face
+  follower: { free_foot: right }
+exit:
+  - { system: cross, relative: face-to-face, follower: { free_foot: left } }
+relations:
+  - { type: recommended, target: cross }

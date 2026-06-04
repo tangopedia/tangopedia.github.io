@@ -1,0 +1,11 @@
+id: weight-change
+kind: primitive
+name:
+  canonical: cambio de peso
+  also: [weight change]
+family: primitives
+tags: [transfer]
+difficulty: 1
+entry: {}                     # accepts any state
+exit:
+  - { embrace: same-as-entry, system: same-as-entry, relative: same-as-entry, follower: { free_foot: alternates } }

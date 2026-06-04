@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+*.log
+
+# Author-local planning & notes — intentionally not committed for now
+/plan/
+/initial_prompt.txt
+/thoghts_on_plan_v1.txt
+/move-eg.yaml
+
+# Design-system source / wireframe reference (the live app uses src/styles/ copies)
+/styles/

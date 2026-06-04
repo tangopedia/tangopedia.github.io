@@ -1,0 +1,48 @@
+---
+import Base from '../layouts/Base.astro';
+import { loadVocab } from '../lib/vocab';
+import { loadFigures } from '../lib/figures';
+import { buildGraph } from '../lib/graph';
+
+const vocab = loadVocab();
+const figures = await loadFigures();
+const graph = buildGraph(figures, vocab);
+const base = import.meta.env.BASE_URL;
+
+const val = (v: any) => (v === undefined ? 'any' : Array.isArray(v) ? v.join('/') : v);
+const fmt = (p: any) => (!p ? 'any' : [val(p.embrace), val(p.system), val(p.relative), `foot ${val(p.follower?.free_foot)}`].join(' · '));
+
+// Group by family for the accessible "map" view.
+const families = [...new Set(figures.map((f) => f.family))].sort();
+const pips = (d: number) => Array.from({ length: 4 }, (_, i) => i < d);
+---
+
+<Base title="Tangopedia — all figures">
+  <div class="page-head">
+    <h1>All figures</h1>
+    <p class="lede">The complete, always-searchable list — the calm counterpart to the graph. Grouped by family; expand any figure for its states.</p>
+  </div>
+
+  {families.map((fam) => (
+    <section class="family-group" id={fam}>
+      <h2>{fam}</h2>
+      <div class="tile-grid">
+        {figures.filter((f) => f.family === fam).map((f) => (
+          <div class="tile-card">
+            <a class="tile-name" href={`${base}figures/${f.id}/`}>{f.name.canonical}</a>
+            <span class="blob-lvl" aria-label={`difficulty ${f.difficulty} of 4`}>
+              {pips(Math.min(f.difficulty, 4)).map((on) => (
+                <span style={`display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px;background:${on ? `var(--diff-${Math.min(f.difficulty, 4)})` : 'var(--line)'}`}></span>
+              ))}
+            </span>
+            <span class="tile-meta">{f.kind}{f.tags?.length ? ` · ${f.tags.join(', ')}` : ''}</span>
+            <details>
+              <summary>states</summary>
+              <div style="margin-top:.4em">entry: {fmt(f.entry)}<br />exit: {f.exit.map((e: any) => fmt(e)).join(' | ')}</div>
+            </details>
+          </div>
+        ))}
+      </div>
+    </section>
+  ))}
+</Base>

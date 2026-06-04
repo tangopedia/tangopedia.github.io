@@ -1,0 +1,14 @@
+id: ochos
+kind: figure
+name:
+  canonical: ochos
+family: ochos
+tags: [family]
+difficulty: 2
+entry:
+  relative: face-to-face
+exit:
+  - { relative: face-to-face, follower: { free_foot: alternates } }
+relations:
+  - { type: recommended, target: forward-ocho }
+  - { type: recommended, target: back-ocho }

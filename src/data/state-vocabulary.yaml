@@ -1,0 +1,24 @@
+# Controlled vocabulary for entry/exit states.
+# Couple axes describe the PAIR; role axes describe one partner.
+# Extend `values` as moves require — schema enums + validator pick them up automatically.
+
+axes:                       # COUPLE axes (shared by both partners)
+  embrace:
+    description: Frame between partners.
+    values: [close, open, v]          # v = the open "V" / salon hybrid
+  system:
+    description: Relationship of the partners' walking legs.
+    values: [parallel, cross]
+  relative:
+    description: Facing / relative position of the partners.
+    values: [face-to-face, offset, side-by-side, follower-front, leader-front]
+
+roles:                      # PER-ROLE axes (given for follower; optionally for leader)
+  free_foot:
+    description: Which of a partner's feet is unweighted (free).
+    values: [left, right]
+
+keywords:                   # reserved — NOT concrete values
+  any: no constraint on this axis (wildcard); usable in entry or exit
+  same-as-entry: exit axis equals this figure's resolved entry value (exit only)
+  alternates: exit foot is the opposite of the entry foot (free_foot exit only)

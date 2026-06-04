@@ -1,0 +1,12 @@
+id: pivot
+kind: primitive
+name:
+  canonical: pivote
+  also: [pivot]
+family: primitives
+tags: [rotation]
+difficulty: 1
+entry:
+  relative: face-to-face
+exit:
+  - { embrace: same-as-entry, system: same-as-entry, relative: [face-to-face, offset], follower: { free_foot: same-as-entry } }

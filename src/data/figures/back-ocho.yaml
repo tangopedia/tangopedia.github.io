@@ -1,0 +1,23 @@
+id: back-ocho
+kind: figure
+name:
+  canonical: ocho atrás
+  also: [back ocho]
+family: ochos
+tags: [pivot, dissociation]
+difficulty: 2
+entry:
+  embrace: [close, open]
+  system: [parallel, cross]
+  relative: face-to-face
+  follower: { free_foot: left }
+exit:
+  - embrace: same-as-entry
+    system: same-as-entry
+    relative: face-to-face
+    follower: { free_foot: alternates }
+clips:
+  - { type: local-loop, src: back-ocho-overhead.webm, view: overhead }
+relations:
+  - { type: variant_of, target: ochos }
+  - { type: mirror_of, target: forward-ocho }

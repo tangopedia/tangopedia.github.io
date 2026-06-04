@@ -1,0 +1,47 @@
+id: forward-ocho
+kind: figure
+name:
+  canonical: ocho adelante
+  also: [forward ocho]
+  spelling_variants: [ocho]
+family: ochos
+tags: [pivot, dissociation]
+difficulty: 2
+
+entry:                          # COUPLE axes + the FOLLOWER line (canonical)
+  embrace: [close, open]
+  system: [parallel, cross]
+  relative: face-to-face
+  follower: { free_foot: right }
+exit:
+  - embrace: same-as-entry
+    system: same-as-entry
+    relative: face-to-face
+    follower: { free_foot: alternates }
+
+executions:                     # leader VOICINGS of the same follower line
+  - id: walking
+    name: { canonical: acompañando }     # leader walks with her
+    leader:
+      entry: { free_foot: right }
+      exit: [{ free_foot: alternates }]
+    decomposition:
+      - { ref: dissociate }
+      - { ref: pivot, leg: standing }
+      - { ref: step, dir: forward }
+  - id: on-axis
+    name: { canonical: contrapeso }      # leader stays on his axis — the "counterweight" feel
+    leader:
+      entry: { free_foot: left }
+      exit: [{ free_foot: same-as-entry }]
+    decomposition:
+      - { ref: weight-change }           # the visible difference: he changes weight first
+      - { ref: pivot, leg: left }
+      - { ref: dissociate }
+
+clips:
+  - { type: youtube, id: dQw4w9WgXcQ, view: front }
+
+relations:
+  - { type: variant_of, target: ochos }
+  - { type: mirror_of, target: back-ocho }

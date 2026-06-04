@@ -1,0 +1,5 @@
+id: first-class
+title: A beginner's first class
+description: A short curated path through the most fundamental figures.
+ordered: true
+figures: [salida, cross, forward-ocho, back-ocho]
